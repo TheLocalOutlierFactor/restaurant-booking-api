@@ -9,7 +9,7 @@ from src.routers import tables, reservations
 
 
 app = FastAPI(title="Restaurant Table Booking API")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 app.include_router(tables.router)
 app.include_router(reservations.router)

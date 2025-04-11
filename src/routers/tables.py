@@ -15,7 +15,7 @@ async def read_tables(db: AsyncSession = Depends(get_async_session)):
     return await get_all_tables(db)
 
 
-@router.post("/", response_model=TableOut)
+@router.post("/", response_model=TableOut, status_code=201)
 async def add_table(table: TableCreate, db: AsyncSession = Depends(get_async_session)):
     return await create_table(db, table)
 

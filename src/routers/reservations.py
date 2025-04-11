@@ -15,7 +15,7 @@ async def read_reservations(db: AsyncSession = Depends(get_async_session)):
     return await get_all_reservations(db)
 
 
-@router.post("/", response_model=ReservationOut)
+@router.post("/", response_model=ReservationOut, status_code=201)
 async def add_reservation(reservation: ReservationCreate, db: AsyncSession = Depends(get_async_session)):
     try:
         reservation = await create_reservation(db, reservation)

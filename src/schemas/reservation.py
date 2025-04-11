@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from src.schemas.table import TableBase
 
@@ -17,7 +17,6 @@ class ReservationCreate(ReservationBase):
 
 
 class ReservationOut(ReservationBase):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+    id: int
