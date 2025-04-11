@@ -5,10 +5,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from src.utils.logger import logger
+from src.routers import tables, reservations
 
 
 app = FastAPI(title="Restaurant Table Booking API")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.include_router(tables.router)
+app.include_router(reservations.router)
 
 
 @app.middleware("http")
