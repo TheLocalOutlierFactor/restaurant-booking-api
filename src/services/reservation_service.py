@@ -17,13 +17,17 @@ async def is_reserved(db: AsyncSession, table_id: int, start_time, duration):
     reserved = await db.execute(select(Reservation).where(
         (Reservation.table_id == table_id) &
         (Reservation.reservation_time < end_time) &
-        ((Reservation.reservation_time + timedelta(minutes=Reservation.duration_minutes)) > start_time)
+        ((Reservation.reservation_time + timedelta(minutes=duration)) > start_time)
     ))
     return bool(reserved.scalars().first())
 
 
 async def create_reservation(db: AsyncSession, reservation: ReservationCreate):
-    if is_reserved(db, reservation.table_id, reservation.reservation_time, reservation.duration_minutes):
+    reserved = await is_reserved(db,
+                                 reservation.table_id,
+                                 reservation.reservation_time,
+                                 reservation.duration_minutes)
+    if reserved:
         raise ValueError("Table is already reserved for this time.")
     db_res = Reservation(**reservation.model_dump())
     db.add(db_res)
