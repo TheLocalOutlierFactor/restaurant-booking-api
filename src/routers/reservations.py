@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.reservation import ReservationCreate, ReservationOut
 from src.services.reservation_service import get_all_reservations, create_reservation, delete_reservation
 from src.database import get_async_session
+from src.utils import exceptions
 
 
 router = APIRouter(prefix="/reservations", tags=["Reservations"])
@@ -20,7 +21,9 @@ async def add_reservation(reservation: ReservationCreate, db: AsyncSession = Dep
     try:
         reservation = await create_reservation(db, reservation)
         return reservation
-    except ValueError as e:
+    except exceptions.ForeignKeyError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except exceptions.ReservationConflictError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -28,5 +31,5 @@ async def add_reservation(reservation: ReservationCreate, db: AsyncSession = Dep
 async def remove_reservation(reservation_id: int, db: AsyncSession = Depends(get_async_session)):
     reservation = await delete_reservation(db, reservation_id)
     if not reservation:
-        raise HTTPException(status_code=404, detail="Reservation not found")
+        raise HTTPException(status_code=404, detail=exceptions.RESERVATION_NOT_FOUND)
     return reservation
