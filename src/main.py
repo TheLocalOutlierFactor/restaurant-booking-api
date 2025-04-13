@@ -15,6 +15,7 @@ app.include_router(tables.router)
 app.include_router(reservations.router)
 
 
+# Log method calls in console
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"➡️ {request.method} {request.url}")
@@ -27,6 +28,7 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+# Needed to use favicon for index page and suppress warnings for 404 calls to favicon.ico
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse("static/favicon.ico")
@@ -34,4 +36,4 @@ async def favicon():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Go to /docs for SwaggerUI documentation"}

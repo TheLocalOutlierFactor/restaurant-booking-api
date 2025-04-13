@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -20,11 +18,11 @@ async def create_table(db: AsyncSession, table: TableCreate):
     try:
         await db.commit()
     except IntegrityError as e:
-        if e.orig.sqlstate == "23505":  # Ошибка 23505 это Unique Constraint Violation
+        if e.orig.sqlstate == "23505":  # Error 23505 is UniqueConstraintViolation (from IntegrityError subclass)
             await db.rollback()
             raise UniqueConstraintError
         await db.rollback()
-        raise e # Ошибка все равно бросается, если она не связана с дубликатом имени
+        raise e  # Raise original IntegrityError if it is unrelated to UniqueConstraintViolation
     await db.refresh(db_table)
     return db_table
 

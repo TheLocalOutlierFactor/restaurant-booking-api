@@ -23,6 +23,7 @@ async def table_exists(db: AsyncSession, table_id: int):
 async def is_reserved(db: AsyncSession, table_id: int, start_time: datetime, duration: int):
     end_time = start_time + timedelta(minutes=duration)
 
+    # Cast duration to INTERVAL so PostgreSQL can properly calculate time shift for checks
     interval_expression = cast(Reservation.duration_minutes.op("||")(" minutes"), INTERVAL)
     reserved = await db.execute(select(Reservation).where(
         (Reservation.table_id == table_id) &
