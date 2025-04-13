@@ -1,0 +1,29 @@
+services:
+  postgres_db:
+    image: postgres:17
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_test_database.sh:/docker-entrypoint-initdb.d/init_test_database.sh
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: restaurant-booking-api
+    environment:
+      DATABASE_HOST: postgres_db
+      TEST_DATABASE_HOST: postgres_db
+    depends_on:
+      - postgres_db
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
