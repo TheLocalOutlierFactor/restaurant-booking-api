@@ -9,7 +9,6 @@ from src.routers import tables, reservations
 
 
 app = FastAPI(title="Restaurant Table Booking API")
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 app.include_router(tables.router)
 app.include_router(reservations.router)
@@ -31,7 +30,7 @@ async def log_requests(request: Request, call_next):
 # Needed to use favicon for index page and suppress warnings for 404 calls to favicon.ico
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return FileResponse("static/favicon.ico")
+    return FileResponse("src/static/favicon.ico")
 
 
 @app.get("/")
